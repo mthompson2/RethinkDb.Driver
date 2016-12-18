@@ -93,48 +93,61 @@ namespace RethinkDb.Driver.Ast {
                         {
                            return Table ( expr );
                         }
-/// <summary>
-/// <para>Create a table. A RethinkDB table is a collection of JSON documents.</para>
-/// </summary>
-/// <example><para>Example: Create a table named 'dc_universe' with the default settings.</para>
-/// <code>&gt; r.db('heroes').tableCreate('dc_universe').run(conn, callback);
-/// // Result passed to callback
-/// {
-///     "config_changes": [
-///         {
-///             "new_val": {
-///                 "db": "test",
-///                 "durability":  "hard",
-///                 "id": "20ea60d4-3b76-4817-8828-98a236df0297",
-///                 "name": "dc_universe",
-///                 "primary_key": "id",
-///                 "shards": [
-///                     {
-///                         "primary_replica": "rethinkdb_srv1",
-///                         "replicas": [
-///                             "rethinkdb_srv1",
-///                             "rethinkdb_srv2"
-///                         ]
-///                     }
-///                 ],
-///                 "write_acks": "majority"
-///             },
-///             "old_val": null
-///         }
-///     ],
-///     "tables_created": 1
-/// }
-/// </code></example>
-                        public TableCreate TableCreate ( Object expr )
-                        {
-                            Arguments arguments = new Arguments(this);
-                            arguments.CoerceAndAdd(expr);
-                            return new TableCreate (arguments );
-                        }
-                        internal TableCreate tableCreate ( Object expr )
-                        {
-                           return TableCreate ( expr );
-                        }
+        /// <summary>
+        /// <para>Create a table. A RethinkDB table is a collection of JSON documents.</para>
+        /// </summary>
+        /// <example><para>Example: Create a table named 'dc_universe' with the default settings.</para>
+        /// <code>&gt; r.db('heroes').tableCreate('dc_universe').run(conn, callback);
+        /// // Result passed to callback
+        /// {
+        ///     "config_changes": [
+        ///         {
+        ///             "new_val": {
+        ///                 "db": "test",
+        ///                 "durability":  "hard",
+        ///                 "id": "20ea60d4-3b76-4817-8828-98a236df0297",
+        ///                 "name": "dc_universe",
+        ///                 "primary_key": "id",
+        ///                 "shards": [
+        ///                     {
+        ///                         "primary_replica": "rethinkdb_srv1",
+        ///                         "replicas": [
+        ///                             "rethinkdb_srv1",
+        ///                             "rethinkdb_srv2"
+        ///                         ]
+        ///                     }
+        ///                 ],
+        ///                 "write_acks": "majority"
+        ///             },
+        ///             "old_val": null
+        ///         }
+        ///     ],
+        ///     "tables_created": 1
+        /// }
+        /// </code></example>
+        /// 
+        public TableCreate TableCreate(Object expr, Object primarykey)
+        {
+            Arguments arguments = new Arguments(this);
+            arguments.CoerceAndAdd(expr);
+
+            OptArgs opt = new OptArgs();
+            opt.Add("primary_key", Util.ToReqlAst(primarykey));
+            return new TableCreate(arguments, opt);
+        }
+
+        public TableCreate TableCreate ( Object expr )
+        {
+            Arguments arguments = new Arguments(this);
+            arguments.CoerceAndAdd(expr);
+            return new TableCreate (arguments );
+        }
+
+        internal TableCreate tableCreate ( Object expr )
+        {
+        return TableCreate ( expr );
+        }
+
 /// <summary>
 /// <para>Drop a table from a database. The table and all its data will be deleted.</para>
 /// </summary>
